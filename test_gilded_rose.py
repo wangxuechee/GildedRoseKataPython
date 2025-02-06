@@ -22,6 +22,46 @@ class GildedRoseTest(unittest.TestCase):
         all_items = gilded_rose.get_item()
         self.assertEqual(["Sulfuras"], all_items)
 
+    # logical error tests
+    def test_normal_item_quality_decreases(self):
+        items = [Item("Normal Item", 10, 20)]
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        self.assertEqual(19, items[0].quality, "Normal item quality should decrease by 1")
+
+    def test_backstage_passes_quality_increase(self):
+        items = [Item("Backstage passes to a TAFKAL80ETC concert", 9, 10)]
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        self.assertEqual(12, items[0].quality, "Backstage passes quality should increase by 2 when 10 days or less")
+
+    def test_conjured_item_quality_degrades_twice_as_fast(self):
+        items = [Item("Conjured Mana Cake", 5, 10)]
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        self.assertEqual(8, items[0].quality, "Conjured item quality should degrade twice as fast")
+
+    def test_quality_never_negative(self):
+        items = [Item("Normal Item", 0, 0)]
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        self.assertEqual(0, items[0].quality, "Item quality should never be negative")
+
+    # syntax error tests
+    def test_unimplemented_feature(self):
+        items = [Item("Normal Item", 5, 10)]
+        gilded_rose = GildedRose(items)
+        with self.assertRaises(AttributeError, msg="Calling an unimplemented feature should raise AttributeError"):
+            gilded_rose.unimplemented_feature()
+
+    def test_accessing_unimplemented_property(self):
+        items = [Item("Aged Brie", 10, 20)]
+        with self.assertRaises(AttributeError, msg="Accessing an unimplemented property should raise AttributeError"):
+            _ = items[0].unimplemented_property
+
+    def test_item_initialization_invalid_type(self):
+        with self.assertRaises(TypeError, msg="Initializing Item with invalid argument types should raise TypeError"):
+            Item(name=123, sell_in="ten", quality=None)
 
 
 if __name__ == '__main__':
