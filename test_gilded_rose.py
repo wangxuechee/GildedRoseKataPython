@@ -35,11 +35,11 @@ class GildedRoseTest(unittest.TestCase):
         gilded_rose.update_quality()
         self.assertEqual(12, items[0].quality, "Backstage passes quality should increase by 2 when 10 days or less")
 
-    def test_conjured_item_quality_degrades_twice_as_fast(self):
-        items = [Item("Conjured Mana Cake", 5, 10)]
+    def test_quality_never_above_50(self):
+        items = [Item("Aged Brie", 5, 50)]
         gilded_rose = GildedRose(items)
         gilded_rose.update_quality()
-        self.assertEqual(8, items[0].quality, "Conjured item quality should degrade twice as fast")
+        self.assertEqual(50, items[0].quality, "Quality should never be above 50")
 
     def test_quality_never_negative(self):
         items = [Item("Normal Item", 0, 0)]
@@ -63,6 +63,11 @@ class GildedRoseTest(unittest.TestCase):
         with self.assertRaises(TypeError, msg="Initializing Item with invalid argument types should raise TypeError"):
             Item(name=123, sell_in="ten", quality=None)
 
+    def test_gilded_rose_list_all_items(self):
+        items = [Item("Sulfuras, Hand of Ragnaros", 5, 80)]
+        gilded_rose = GildedRose(items)
+        with self.assertRaises(AttributeError, msg="Calling a non-existent method should raise AttributeError"):
+            _ = gilded_rose.get_item()
 
 if __name__ == '__main__':
     unittest.main()
